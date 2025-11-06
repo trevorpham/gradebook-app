@@ -4,6 +4,11 @@ This is a group project for FGCU's Programming II course in Fall 2025. It is a s
 student gradebook app where the instructor enters grades in a list of homework assignments
 and exams, and the computer calculates the final grade.
 
+## How to build and run this app
+- This app is built using qmake in Qt Creator. Open `gradebook-app.pro` in Qt Creator,
+select a kit for your operating system, and click the "Build Project" button at the bottom
+left of the window. Then click the "Run" button just above it.
+
 ## Project Planning Notes
 
 ### Features
