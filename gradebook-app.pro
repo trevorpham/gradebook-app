@@ -9,11 +9,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    assignment.cpp \
+    exam.cpp \
+    homework.cpp \
     main.cpp \
     gradebook.cpp
 
 HEADERS += \
-    gradebook.h
+    assignment.h \
+    exam.h \
+    gradebook.h \
+    homework.h
 
 FORMS += \
     gradebook.ui

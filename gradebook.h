@@ -17,6 +17,11 @@ public:
     Gradebook(QWidget *parent = nullptr);
     ~Gradebook();
 
+private slots:
+    void on_btnAddNewHomework_clicked();
+
+    void on_btnAddNewExam_clicked();
+
 private:
     Ui::Gradebook *ui;
 };
