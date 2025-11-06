@@ -15,12 +15,17 @@ class Gradebook : public QMainWindow
 
 public:
     Gradebook(QWidget *parent = nullptr);
+    QString calcLetterGrade(float);
     ~Gradebook();
 
 private slots:
     void on_btnAddNewHomework_clicked();
 
     void on_btnAddNewExam_clicked();
+
+    void on_tableHomeworks_cellChanged(int row, int column);
+
+    void on_tableExams_cellChanged(int row, int column);
 
 private:
     Ui::Gradebook *ui;
