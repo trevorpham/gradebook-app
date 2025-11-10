@@ -27,6 +27,11 @@ private slots:
 
     void on_tableExams_cellChanged(int row, int column);
 
+    void recomputeHW();
+
+    void recomputeExam();
+
+
 private:
     Ui::Gradebook *ui;
 };

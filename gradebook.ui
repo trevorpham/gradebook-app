@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>805</width>
-    <height>600</height>
+    <width>883</width>
+    <height>633</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -112,7 +112,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -172,7 +172,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -212,12 +212,12 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>240</x>
       <y>500</y>
-      <width>338</width>
+      <width>398</width>
       <height>18</height>
      </rect>
     </property>
@@ -232,32 +232,78 @@
      <item>
       <widget class="QLabel" name="totalPtsAwarded">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Total Points Awarded:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="totalPtsMax">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Total Points Max:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="totalPercent">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Total %:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="letterGrade">
        <property name="text">
-        <string>TextLabel</string>
+        <string>LetterGrade:</string>
        </property>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLineEdit" name="Test_HW2">
+    <property name="geometry">
+     <rect>
+      <x>82</x>
+      <y>10</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="Test_Exam2">
+    <property name="geometry">
+     <rect>
+      <x>482</x>
+      <y>10</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Test_HW">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>10</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>% Weight</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Test_Exam">
+    <property name="geometry">
+     <rect>
+      <x>408</x>
+      <y>10</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>% Weigth</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -265,8 +311,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>805</width>
-     <height>34</height>
+     <width>883</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
