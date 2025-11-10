@@ -7,8 +7,6 @@ Gradebook::Gradebook(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Gradebook)
 {
-    QVector<Homework> m_homeworks;
-    QVector<Exam>     m_exams;
     ui->setupUi(this);
     ui->tableHomeworks->verticalHeader()->setVisible(false);
     ui->tableExams->verticalHeader()->setVisible(false);
@@ -30,12 +28,14 @@ Gradebook::~Gradebook()
 
 void Gradebook::on_btnAddNewHomework_clicked()
 {
+    m_homeworks.push_back(Homework());
     ui->tableHomeworks->insertRow(ui->tableHomeworks->rowCount());
 }
 
 
 void Gradebook::on_btnAddNewExam_clicked()
 {
+    m_exams.push_back(Exam());
     ui->tableExams->insertRow(ui->tableExams->rowCount());
 }
 
