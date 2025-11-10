@@ -2,11 +2,16 @@
 #include "exam.h"
 #include "homework.h"
 #include "ui_gradebook.h"
+#include <QLineEdit>
+#include<QTextEdit>
+#include <QCheckBox>
 
 Gradebook::Gradebook(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Gradebook)
 {
+    QVector<Homework> m_homeworks;
+    QVector<Exam>     m_exams;
     ui->setupUi(this);
     ui->tableHomeworks->verticalHeader()->setVisible(false);
     ui->tableExams->verticalHeader()->setVisible(false);
@@ -28,20 +33,29 @@ Gradebook::~Gradebook()
 
 void Gradebook::on_btnAddNewHomework_clicked()
 {
-    m_homeworks.push_back(Homework());
-    ui->tableHomeworks->insertRow(ui->tableHomeworks->rowCount());
+    //ui->tableHomeworks->insertRow(ui->tableHomeworks->rowCount());
+
+    int row = ui->tableHomeworks->rowCount();
+    ui->tableHomeworks->insertRow(row);
+    QCheckBox* checkBox = new QCheckBox(ui ->tableHomeworks);
+    ui->tableHomeworks->setCellWidget(row, 3, checkBox);
+    connect(checkBox, &QCheckBox::toggled, this, [this]{ recomputeHW(); });
+    connect(ui->Test_HW2, &QLineEdit::textChanged, this, [this]{recomputeHW();});
+
+
+}
+
+void Gradebook::on_tableHomeworks_cellChanged(int row,int column){
+    recomputeHW();
 }
 
 
-void Gradebook::on_btnAddNewExam_clicked()
-{
-    m_exams.push_back(Exam());
-    ui->tableExams->insertRow(ui->tableExams->rowCount());
-}
+// START OF HOMEWORK
 
 
-void Gradebook::on_tableHomeworks_cellChanged(int row, int column)
+void Gradebook::recomputeHW()
 {
+    QTableWidget* HW = ui->tableHomeworks;
     int rowCount = ui->tableHomeworks->rowCount();
     int colCount = ui->tableHomeworks->columnCount();
     int pointAwardedCol = 1;
@@ -53,6 +67,11 @@ void Gradebook::on_tableHomeworks_cellChanged(int row, int column)
     for (int i=0; i<rowCount; i++) {
         QTableWidgetItem* itemPointAwarded = ui->tableHomeworks->item(i, pointAwardedCol);
         QTableWidgetItem* itemPointMax = ui->tableHomeworks->item(i, pointMaxCol);
+        QCheckBox* Box = qobject_cast<QCheckBox*>(HW->cellWidget(i,3));
+        if(Box && Box->isChecked()){
+            continue;
+        }
+
         if (itemPointAwarded) {
             float itemValue = itemPointAwarded->text().toFloat();
             pointAwardedSum += itemValue;
@@ -61,6 +80,7 @@ void Gradebook::on_tableHomeworks_cellChanged(int row, int column)
             float itemValue = itemPointMax->text().toFloat();
             pointMaxSum += itemValue;
         }
+
     }
 
     ui->totalHomeworkPtsAwarded->setText(QString::number(pointAwardedSum));
@@ -71,12 +91,16 @@ void Gradebook::on_tableHomeworks_cellChanged(int row, int column)
         ui->totalHomeworkPercent->setText(QString::number(percent * 100).append("%"));
     }
 
+
+    float Test_Hw = ui->Test_HW2->text().toFloat();
+    float Test_Exam = ui->Test_Exam2->text().toFloat();
+
     float examPoints = ui->totalExamPtsAwarded->text().toFloat();
-    float totalPointsAwarded = pointAwardedSum + examPoints;
+    float totalPointsAwarded = (pointAwardedSum*Test_Hw) + (examPoints*Test_Exam); //  CHANGE HERE grade calculation with weight
     ui->totalPtsAwarded->setText(QString::number(totalPointsAwarded));
 
     float examMaxPoints = ui->totalExamPtsMax->text().toFloat();
-    float totalPointsMax = pointMaxSum + examMaxPoints;
+    float totalPointsMax = (pointMaxSum*Test_Hw) + (examMaxPoints*Test_Exam);
     ui->totalPtsMax->setText(QString::number(totalPointsMax));
 
     float totalPercent = totalPointsAwarded / totalPointsMax;
@@ -86,8 +110,29 @@ void Gradebook::on_tableHomeworks_cellChanged(int row, int column)
     ui->letterGrade->setText(letterGrade);
 }
 
-void Gradebook::on_tableExams_cellChanged(int row, int column)
+// MOVE THIS HERE FOR NOW
+void Gradebook::on_btnAddNewExam_clicked()
 {
+    //ui->tableExams->insertRow(ui->tableExams->rowCount());
+
+    int row = ui->tableExams->rowCount();
+    ui->tableExams->insertRow(row);
+    QCheckBox* checkBox = new QCheckBox(ui ->tableExams);
+    ui->tableExams->setCellWidget(row, 3, checkBox);
+    connect(checkBox, &QCheckBox::toggled, this, [this]{ recomputeExam(); });
+    connect(ui->Test_Exam2, &QLineEdit::textChanged, this, [this]{recomputeExam();});
+
+}
+
+void Gradebook::on_tableExams_cellChanged(int row, int column){
+    recomputeExam();
+}
+
+
+// START OF EXAM
+void Gradebook::recomputeExam()
+{
+    QTableWidget* Exam = ui ->tableExams;
     int rowCount = ui->tableExams->rowCount();
     int colCount = ui->tableExams->columnCount();
     int pointAwardedCol = 1;
@@ -99,6 +144,12 @@ void Gradebook::on_tableExams_cellChanged(int row, int column)
     for (int i=0; i<rowCount; i++) {
         QTableWidgetItem* itemPointAwarded = ui->tableExams->item(i, pointAwardedCol);
         QTableWidgetItem* itemPointMax = ui->tableExams->item(i, pointMaxCol);
+
+        QCheckBox* Box = qobject_cast<QCheckBox*>(Exam->cellWidget(i,3));
+        if(Box && Box->isChecked()){
+            continue;
+        }
+
         if (itemPointAwarded) {
             float itemValue = itemPointAwarded->text().toFloat();
             pointAwardedSum += itemValue;
@@ -109,6 +160,7 @@ void Gradebook::on_tableExams_cellChanged(int row, int column)
         }
     }
 
+
     ui->totalExamPtsAwarded->setText(QString::number(pointAwardedSum));
     ui->totalExamPtsMax->setText(QString::number(pointMaxSum));
 
@@ -117,12 +169,15 @@ void Gradebook::on_tableExams_cellChanged(int row, int column)
         ui->totalExamPercent->setText(QString::number(percent * 100).append("%"));
     }
 
+    float Test_Hw = ui->Test_HW2->text().toFloat();
+    float Test_Exam = ui->Test_Exam2->text().toFloat();
+
     float homeworkPoints = ui->totalHomeworkPtsAwarded->text().toFloat();
-    float totalPointsAwarded = pointAwardedSum + homeworkPoints;
+    float totalPointsAwarded = (pointAwardedSum*Test_Exam) + (homeworkPoints*Test_Hw); // grade calculation w weigth
     ui->totalPtsAwarded->setText(QString::number(totalPointsAwarded));
 
     float homeworkMaxPoints = ui->totalHomeworkPtsMax->text().toFloat();
-    float totalPointsMax = pointMaxSum + homeworkMaxPoints;
+    float totalPointsMax = (pointMaxSum*Test_Exam) + (homeworkMaxPoints*Test_Hw); // something here?
     ui->totalPtsMax->setText(QString::number(totalPointsMax));
 
     float totalPercent = totalPointsAwarded / totalPointsMax;
@@ -131,4 +186,5 @@ void Gradebook::on_tableExams_cellChanged(int row, int column)
     QString letterGrade = calcLetterGrade(totalPercent);
     ui->letterGrade->setText(letterGrade);
 }
+
 

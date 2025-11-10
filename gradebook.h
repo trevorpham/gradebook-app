@@ -1,8 +1,6 @@
 #ifndef GRADEBOOK_H
 #define GRADEBOOK_H
 
-#include "exam.h"
-#include "homework.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -14,8 +12,6 @@ QT_END_NAMESPACE
 class Gradebook : public QMainWindow
 {
     Q_OBJECT
-    QVector<Homework> m_homeworks;
-    QVector<Exam>     m_exams;
 
 public:
     Gradebook(QWidget *parent = nullptr);
@@ -30,6 +26,11 @@ private slots:
     void on_tableHomeworks_cellChanged(int row, int column);
 
     void on_tableExams_cellChanged(int row, int column);
+
+    void recomputeHW();
+
+    void recomputeExam();
+
 
 private:
     Ui::Gradebook *ui;
