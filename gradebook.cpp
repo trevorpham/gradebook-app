@@ -10,8 +10,6 @@ Gradebook::Gradebook(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Gradebook)
 {
-    QVector<Homework> m_homeworks;
-    QVector<Exam>     m_exams;
     ui->setupUi(this);
     ui->tableHomeworks->verticalHeader()->setVisible(false);
     ui->tableExams->verticalHeader()->setVisible(false);

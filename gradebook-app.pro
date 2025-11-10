@@ -19,7 +19,8 @@ HEADERS += \
     assignment.h \
     exam.h \
     gradebook.h \
-    homework.h
+    homework.h \
+    idcounter.h
 
 FORMS += \
     gradebook.ui

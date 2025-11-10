@@ -1,3 +1,3 @@
 #include "homework.h"
 
-Homework::Homework() {}
+Homework::Homework(int id) : Assignment(id) {}
