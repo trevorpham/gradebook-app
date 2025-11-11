@@ -10,11 +10,15 @@ Gradebook::Gradebook(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Gradebook)
 {
-    QVector<Homework> m_homeworks;
-    QVector<Exam>     m_exams;
     ui->setupUi(this);
     ui->tableHomeworks->verticalHeader()->setVisible(false);
     ui->tableExams->verticalHeader()->setVisible(false);
+}
+
+int Gradebook::nextAssignmentID()
+{
+    static int s_nextID = 1;
+    return s_nextID++;
 }
 
 QString Gradebook::calcLetterGrade(float percent)
@@ -28,6 +32,7 @@ QString Gradebook::calcLetterGrade(float percent)
 
 Gradebook::~Gradebook()
 {
+    while (!assignments_.isEmpty()) delete assignments_.takeLast();
     delete ui;
 }
 
@@ -186,5 +191,3 @@ void Gradebook::recomputeExam()
     QString letterGrade = calcLetterGrade(totalPercent);
     ui->letterGrade->setText(letterGrade);
 }
-
-

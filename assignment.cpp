@@ -1,3 +1,47 @@
 #include "assignment.h"
 
-Assignment::Assignment() {}
+Assignment::Assignment(int id) : id_{id} {}
+Assignment::~Assignment() = default;
+
+int Assignment::id()
+{
+    return id_;
+}
+
+std::string Assignment::type()
+{
+    return type_;
+}
+
+std::string Assignment::name()
+{
+    return name_;
+}
+
+void Assignment::setName(std::string &newName)
+{
+    name_ = newName;
+}
+
+float Assignment::pointsAwarded()
+{
+    return pointsAwarded_;
+}
+
+void Assignment::setPointsAwarded(float newPointsAwarded)
+{
+    pointsAwarded_ = std::min(
+        static_cast<float>(pointsMax_),
+        std::max(0.0f, newPointsAwarded)
+    );
+}
+
+float Assignment::pointsMax()
+{
+    return pointsMax_;
+}
+
+void Assignment::setPointsMax(int newPointsMax)
+{
+    pointsMax_ = std::max(1, newPointsMax);
+}

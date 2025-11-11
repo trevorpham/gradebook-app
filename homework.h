@@ -5,8 +5,18 @@
 
 class Homework : public Assignment
 {
+    std::string type_ = "HOMEWORK";
+    bool isLate_;
+    bool isIgnored_;
+    bool isExtraCredit_;
 public:
-    Homework();
+    Homework(int id);
+    void setPointsAwarded(float newPointsAwarded) override;
+    float effectivePointsAwarded(float latePenaltyFactor) override;
+    bool isLate();
+    void setIsLate();
+    bool isIgnored();
+    void setIsIgnored();
 };
 
 #endif // HOMEWORK_H
