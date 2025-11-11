@@ -5,16 +5,14 @@
 
 class Homework : public Assignment
 {
-    bool m_isLate;
-    bool m_isIgnored;
+    std::string type_ = "HOMEWORK";
+    bool isLate_;
+    bool isIgnored_;
+    bool isExtraCredit_;
 public:
     Homework(int id);
-    // std::string virtual name();
-    // void virtual setName(std::string &newName);
-    // float virtual pointsAwarded();
-    // void virtual setPointsAwarded(float newPointsAwarded);
-    // float virtual pointsMax();
-    // void virtual setPointsMax(float newPointsMax);
+    void setPointsAwarded(float newPointsAwarded) override;
+    float effectivePointsAwarded(float latePenaltyFactor) override;
     bool isLate();
     void setIsLate();
     bool isIgnored();

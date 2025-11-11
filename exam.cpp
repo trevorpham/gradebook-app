@@ -1,20 +1,21 @@
 #include "exam.h"
-#include "idcounter.h"
 
-Exam::Exam() : Assignment(IDCounter<Exam>::getNextID()) {}
+Exam::Exam(int id) : Assignment(id) {}
 
 float Exam::curveOffset()
 {
-    return m_curveOffset;
+    return curveOffset_;
 }
 
 void Exam::setCurveOffset(float newCurveOffset)
 {
-    m_curveOffset = newCurveOffset;
+    curveOffset_ = std::max(0.0f, newCurveOffset);
 }
 
 float Exam::effectivePointsAwarded()
 {
-    float effPts = std::min(m_pointsMax, m_pointsAwarded + (m_curveOffset * m_pointsMax));
-    return effPts;
+    return std::min(
+        static_cast<float>(pointsMax_),
+        pointsAwarded_ + (curveOffset_ * pointsMax_)
+    );
 }

@@ -1,8 +1,7 @@
 #ifndef GRADEBOOK_H
 #define GRADEBOOK_H
 
-#include "exam.h"
-#include "homework.h"
+#include "assignment.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -14,12 +13,15 @@ QT_END_NAMESPACE
 class Gradebook : public QMainWindow
 {
     Q_OBJECT
-    QVector<Homework> m_homeworks;
-    QVector<Exam>     m_exams;
+    QVector<Assignment*> assignments_;
+    float latePenaltyHomework_;
+    int weightHomework_;
+    int weightExam_;
 
 public:
     Gradebook(QWidget *parent = nullptr);
     QString calcLetterGrade(float);
+    int nextAssignmentID();
     ~Gradebook();
 
 private slots:

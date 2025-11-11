@@ -5,12 +5,13 @@
 
 class Exam : public Assignment
 {
-    float m_curveOffset = 0.0f;
+    std::string type_ = "EXAM";
+    float curveOffset_ = 0.0f;
 public:
-    Exam();
+    Exam(int id);
     float curveOffset();
     void setCurveOffset(float newCurveOffset);
-    float effectivePointsAwarded();
+    float effectivePointsAwarded() override;
 };
 
 #endif // EXAM_H

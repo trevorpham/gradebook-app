@@ -15,6 +15,12 @@ Gradebook::Gradebook(QWidget *parent)
     ui->tableExams->verticalHeader()->setVisible(false);
 }
 
+int Gradebook::nextAssignmentID()
+{
+    static int s_nextID = 1;
+    return s_nextID++;
+}
+
 QString Gradebook::calcLetterGrade(float percent)
 {
     if (percent >= .90) return QString("A");
@@ -26,6 +32,7 @@ QString Gradebook::calcLetterGrade(float percent)
 
 Gradebook::~Gradebook()
 {
+    while (!assignments_.isEmpty()) delete assignments_.takeLast();
     delete ui;
 }
 
