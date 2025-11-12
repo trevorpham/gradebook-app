@@ -219,10 +219,10 @@
    <widget class="QTableWidget" name="tableHomeworks">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>661</width>
-      <height>431</height>
+      <x>30</x>
+      <y>40</y>
+      <width>631</width>
+      <height>401</height>
      </rect>
     </property>
     <column>

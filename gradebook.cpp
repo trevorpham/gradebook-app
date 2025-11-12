@@ -22,6 +22,9 @@ Gradebook::Gradebook(QWidget *parent)
     connect(addHW, &QAction::triggered, this, &Gradebook::on_btnAddNewHomework_clicked);
     connect(addEXAM, &QAction::triggered, this, &Gradebook::on_btnAddNewExam_clicked);
 
+    connect(ui->tableHomeworks,&QTableWidget::cellChanged,this,&Gradebook::on_tableHomeworks_cellChanged);
+
+
 
     ui->tableHomeworks->verticalHeader()->setVisible(false);
     //ui->tableExams->verticalHeader()->setVisible(false);
@@ -96,9 +99,14 @@ void Gradebook::on_btnAddNewExam_clicked()
     //connect(ui->Test_Exam2, &QLineEdit::textChanged, this, [this]{GradeCalculation();});
 }
 
-// void Gradebook::on_tableHomeworks_cellChanged(int row, int column){
-//     GradeCalculation();
-// }
+void Gradebook::on_tableHomeworks_cellChanged(int row, int column){
+    GradeCalculation();
+}
+
+// In your class definition or setup function:
+// In your class definition or setup function:
+
+
 
 
 void Gradebook::GradeCalculation()
