@@ -21,8 +21,8 @@ public:
     void virtual setPointsAwarded(float newPointsAwarded);
     float virtual pointsMax();
     void virtual setPointsMax(int newPointsMax);
-    float virtual effectivePointsAwarded() = 0;
-    float virtual effectivePointsAwarded(float modifier) = 0;
+    float virtual effectivePointsAwarded();
+    float virtual effectivePointsAwarded(float modifier);
 };
 
 #endif // ASSIGNMENT_H

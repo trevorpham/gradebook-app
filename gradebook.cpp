@@ -21,6 +21,13 @@ int Gradebook::nextAssignmentID()
     return s_nextID++;
 }
 
+Assignment* Gradebook::createAssignment(std::string& assignmentType, int id)
+{
+    if (assignmentType == "HOMEWORK") return new Homework(id);
+    if (assignmentType == "EXAM") return new Exam(id);
+    else return nullptr;
+}
+
 bool Gradebook::deleteAssignment(int id)
 // Deletes an assignment with specified id. Returns true if successful.
 {
@@ -55,7 +62,7 @@ void Gradebook::on_btnAddNewHomework_clicked()
 {
     int row = ui->tableHomeworks->rowCount();
     // create Assignment object
-    // Assignment* a = createAssignment<Homework>(nextAssignmentID());
+    // Assignment* a = createAssignment("HOMEWORK", nextAssignmentID());
     // assignments_.push_back(a);
     // int id = a->id();
     ui->tableHomeworks->insertRow(row);
