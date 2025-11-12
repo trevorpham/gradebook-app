@@ -1,17 +1,20 @@
 #include "homework.h"
+#include <QDebug>
 
-Homework::Homework(int id) : Assignment(id) {}
-
-void Homework::setPointsAwarded(float newPointsAwarded)
-{
-    pointsAwarded_ = std::max(0.0f, newPointsAwarded);
+Homework::Homework(int id) : Assignment(id) {
+        qDebug() << "Homework object created with ID:" << id;
 }
 
-float Homework::effectivePointsAwarded(float latePenaltyFactor = 1.f)
-{
-    float effPts = pointsAwarded_ * (isLate_ ? latePenaltyFactor * pointsAwarded_ : 1.f);
-    return effPts;
-}
+// void Homework::setPointsAwarded(float newPointsAwarded)
+// {
+//     pointsAwarded_ = std::max(0.0f, newPointsAwarded);
+// }
+
+// float Homework::effectivePointsAwarded(float latePenaltyFactor = 1.f)
+// {
+//     float effPts = pointsAwarded_ * (isLate_ ? latePenaltyFactor * pointsAwarded_ : 1.f);
+//     return effPts;
+// }
 
 bool Homework::isLate()
 {

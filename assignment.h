@@ -8,8 +8,8 @@ protected:
     int id_;
     std::string type_ = "ASSIGNMENT";
     std::string name_ = "";
-    float pointsAwarded_ = 0;
-    int pointsMax_ = 1;
+    float pointsAwarded_;
+    float pointsMax_;
 public:
     Assignment(int id);
     virtual ~Assignment();
@@ -21,8 +21,9 @@ public:
     void virtual setPointsAwarded(float newPointsAwarded);
     float virtual pointsMax();
     void virtual setPointsMax(int newPointsMax);
-    float virtual effectivePointsAwarded() = 0;
-    float virtual effectivePointsAwarded(float modifier) = 0;
+    //===========comment out for now =============//
+    // float virtual effectivePointsAwarded() = 0;
+    // float virtual effectivePointsAwarded(float modifier) = 0;
 };
 
 #endif // ASSIGNMENT_H
