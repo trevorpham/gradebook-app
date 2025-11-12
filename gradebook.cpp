@@ -21,6 +21,28 @@ int Gradebook::nextAssignmentID()
     return s_nextID++;
 }
 
+Assignment* Gradebook::createAssignment(std::string& assignmentType, int id)
+{
+    if (assignmentType == "HOMEWORK") return new Homework(id);
+    if (assignmentType == "EXAM") return new Exam(id);
+    else return nullptr;
+}
+
+bool Gradebook::deleteAssignment(int id)
+// Deletes an assignment with specified id. Returns true if successful.
+{
+    for (int i = 0; i < assignments_.size(); i++)
+    {
+        if (assignments_.at(i)->id() == id)
+        {
+            delete assignments_.at(i);
+            assignments_.remove(i);
+            return true;
+        }
+    }
+    return false;
+}
+
 QString Gradebook::calcLetterGrade(float percent)
 {
     if (percent >= .90) return QString("A");
@@ -38,16 +60,19 @@ Gradebook::~Gradebook()
 
 void Gradebook::on_btnAddNewHomework_clicked()
 {
-    //ui->tableHomeworks->insertRow(ui->tableHomeworks->rowCount());
-
     int row = ui->tableHomeworks->rowCount();
+    // create Assignment object
+    // Assignment* a = createAssignment("HOMEWORK", nextAssignmentID());
+    // assignments_.push_back(a);
+    // int id = a->id();
     ui->tableHomeworks->insertRow(row);
-    QCheckBox* checkBox = new QCheckBox(ui ->tableHomeworks);
-    ui->tableHomeworks->setCellWidget(row, 3, checkBox);
-    connect(checkBox, &QCheckBox::toggled, this, [this]{ recomputeHW(); });
+    QCheckBox* checkBoxIgnore = new QCheckBox(ui->tableHomeworks);
+    QPushButton* checkBoxDelete = new QPushButton(ui->tableHomeworks);
+    ui->tableHomeworks->setCellWidget(row, 3, checkBoxIgnore);
+    ui->tableHomeworks->setCellWidget(row, 4, checkBoxDelete);
+    connect(checkBoxIgnore, &QCheckBox::toggled, this, [this]{ recomputeHW(); });
+    // connect(checkBoxDelete, &QPushButton::clicked, this, [this, id]{ deleteAssignment(id); });
     connect(ui->Test_HW2, &QLineEdit::textChanged, this, [this]{recomputeHW();});
-
-
 }
 
 void Gradebook::on_tableHomeworks_cellChanged(int row,int column){
