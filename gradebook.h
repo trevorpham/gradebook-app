@@ -22,6 +22,7 @@ public:
     Gradebook(QWidget *parent = nullptr);
     QString calcLetterGrade(float percent);
     int nextAssignmentID();
+    Assignment* createAssignment(std::string& assignmentType, int id);
     bool deleteAssignment(int id); // Returns true if successful.
     ~Gradebook();
 
