@@ -14,11 +14,14 @@ class Gradebook : public QMainWindow
 {
     Q_OBJECT
     QVector<Assignment*> assignments_;
+    // score modifiers applied from user input
     float latePenaltyHomework_;
     int weightHomework_;
     int weightExam_;
+
     int nextAssignmentID();
     Assignment* createAssignment(AssignmentType assignmentType, int id);
+    Assignment* getAssignmentByID(int id);
     bool deleteAssignment(int id); // Returns true if successful.
     float categoryEffPointsAwarded(AssignmentType assignmentType);
     float categoryMaxPoints(AssignmentType assignmentType);
@@ -31,7 +34,7 @@ public:
     Gradebook(QWidget *parent = nullptr);
     ~Gradebook();
 
-private slots:
+private slots: //
     void on_btnAddNewHomework_clicked();
 
     void on_btnAddNewExam_clicked();
@@ -39,10 +42,6 @@ private slots:
     void on_tableHomeworks_cellChanged(int row, int column);
 
     void on_tableExams_cellChanged(int row, int column);
-
-    void recomputeHW();
-
-    void recomputeExam();
 
 
 private:

@@ -7,26 +7,25 @@ class Assignment
 {
 protected:
     int id_;
-    AssignmentType const type_ = ASSIGNMENT;
+    AssignmentType const type_ = AssignmentType::ASSIGNMENT;
     std::string name_ = "";
-    bool isIgnored_ = false;
+    bool isDropped_ = false;
     float pointsAwarded_ = 0;
     float pointsMax_ = 1.f;
 public:
     Assignment(int id);
     virtual ~Assignment();
     int id();
-    AssignmentType type();
+    AssignmentType virtual type();
     std::string virtual name();
-    void virtual setName(std::string &newName);
+    void virtual setName(const std::string& newName);
     float virtual pointsAwarded();
     void virtual setPointsAwarded(float newPointsAwarded);
     float virtual pointsMax();
     void virtual setPointsMax(int newPointsMax);
-    bool isIgnored();
-    void setIsIgnored();
-    float virtual effectivePointsAwarded();
-    float virtual effectivePointsAwarded(float modifier);
+    bool isDropped();
+    void setIsDropped();
+    float virtual effectivePointsAwarded() = 0;
 };
 
 #endif // ASSIGNMENT_H

@@ -5,14 +5,17 @@
 #include <QLineEdit>
 #include<QTextEdit>
 #include <QCheckBox>
+#include <QDebug>
 
 Gradebook::Gradebook(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Gradebook)
 {
     ui->setupUi(this);
-    ui->tableHomeworks->verticalHeader()->setVisible(false);
-    ui->tableExams->verticalHeader()->setVisible(false);
+    ui->tableHomeworks->hideColumn(0); // hide ID column
+    ui->tableHomeworks->verticalHeader()->setVisible(false); // hide row index
+    ui->tableExams->hideColumn(0); // hide ID column
+    ui->tableExams->verticalHeader()->setVisible(false); // hide row index
 }
 
 int Gradebook::nextAssignmentID()
@@ -24,13 +27,24 @@ int Gradebook::nextAssignmentID()
 Assignment* Gradebook::createAssignment(AssignmentType type, int id)
 {
     switch(type) {
-    case HOMEWORK:
+    case AssignmentType::HOMEWORK:
         return new Homework(id);
-    case EXAM:
+    case AssignmentType::EXAM:
         return new Exam(id);
     default:
         return nullptr;
     }
+}
+
+Assignment* Gradebook::getAssignmentByID(int id)
+{
+    for (int i = 0; i < assignments_.size(); i++) {
+        if (assignments_.at(i)->id() == id) {
+            return assignments_.at(i);
+        }
+    }
+
+    return nullptr;
 }
 
 bool Gradebook::deleteAssignment(int id)
@@ -38,6 +52,7 @@ bool Gradebook::deleteAssignment(int id)
 {
     for (int i = 0; i < assignments_.size(); i++)
     {
+        if (assignments_.at(i) == nullptr) continue;
         if (assignments_.at(i)->id() == id)
         {
             delete assignments_.at(i);
@@ -68,6 +83,7 @@ float Gradebook::categoryEffPointsAwarded(AssignmentType type)
     float sum = 0.f;
     for (int i = 0; i < assignments_.size(); i++)
     {
+        if (assignments_.at(i) == nullptr) continue;
         if (assignments_.at(i)->type() == type) {
             sum += assignments_.at(i)->effectivePointsAwarded();
         }
@@ -80,6 +96,7 @@ float Gradebook::categoryMaxPoints(AssignmentType type)
     float sum = 0.f;
     for (int i = 0; i < assignments_.size(); i++)
     {
+        if (assignments_.at(i) == nullptr) continue;
         if (assignments_.at(i)->type() == type) {
             sum += assignments_.at(i)->pointsMax();
         }
@@ -88,13 +105,14 @@ float Gradebook::categoryMaxPoints(AssignmentType type)
 }
 
 void Gradebook::updateDisplayedCalcs()
+// overloaded method, updates all displayed calculated values if no AssignmentType given
 {
-    float effHWPointsAwarded = categoryEffPointsAwarded(HOMEWORK);
-    float maxHWPoints = categoryMaxPoints(HOMEWORK);
+    float effHWPointsAwarded = categoryEffPointsAwarded(AssignmentType::HOMEWORK);
+    float maxHWPoints = categoryMaxPoints(AssignmentType::HOMEWORK);
     float HWPercent = (effHWPointsAwarded / maxHWPoints) * 100;
 
-    float effExamPointsAwarded = categoryEffPointsAwarded(EXAM);
-    float maxExamPoints = categoryMaxPoints(EXAM);
+    float effExamPointsAwarded = categoryEffPointsAwarded(AssignmentType::EXAM);
+    float maxExamPoints = categoryMaxPoints(AssignmentType::EXAM);
     float examPercent = (effExamPointsAwarded / maxExamPoints) * 100;
 
 
@@ -108,18 +126,19 @@ void Gradebook::updateDisplayedCalcs()
 }
 
 void Gradebook::updateDisplayedCalcs(AssignmentType type)
+// overloaded method, updates displayed calculations only for specified AssignmentType
 {
     float effPointsAwarded = categoryEffPointsAwarded(type);
     float maxPoints = categoryMaxPoints(type);
     float categoryPercent = (effPointsAwarded / maxPoints) * 100;
 
     switch(type) {
-    case HOMEWORK:
+    case AssignmentType::HOMEWORK:
         ui->totalHomeworkPtsAwarded->setText(QString::number(effPointsAwarded));
         ui->totalHomeworkPtsMax->setText(QString::number(maxPoints));
         ui->totalHomeworkPercent->setText(QString::number(categoryPercent));
         break;
-    case EXAM:
+    case AssignmentType::EXAM:
         ui->totalExamPtsAwarded->setText(QString::number(effPointsAwarded));
         ui->totalExamPtsMax->setText(QString::number(maxPoints));
         ui->totalExamPercent->setText(QString::number(categoryPercent));
@@ -131,42 +150,136 @@ void Gradebook::updateDisplayedCalcs(AssignmentType type)
 
 void Gradebook::on_btnAddNewExam_clicked()
 {
-    Assignment* a = createAssignment(EXAM, nextAssignmentID());
+    // creates new Exam and adds it to assignments_
+    Assignment* a = createAssignment(AssignmentType::EXAM, nextAssignmentID());
     assignments_.push_back(a);
 
+    ui->tableExams->blockSignals(true);
+    // insert a new row at the bottom of the table
     int row = ui->tableExams->rowCount();
     ui->tableExams->insertRow(row);
-    QCheckBox* checkBoxIgnore = new QCheckBox(ui ->tableExams);
-    ui->tableExams->setCellWidget(row, 3, checkBoxIgnore);
-    connect(checkBoxIgnore, &QCheckBox::toggled, this, [this, a]{
-        a->setIsIgnored();
-        updateDisplayedCalcs(EXAM);
+    // initialize id cell (hidden)
+    ui->tableExams->setItem( row, 0, new QTableWidgetItem(QString::number(a->id())) );
+    // initialize points awarded cell
+    QTableWidgetItem* itemPtsAward = new QTableWidgetItem(QString::number(a->pointsAwarded()));
+    ui->tableExams->setItem( row, 2, itemPtsAward );
+    // initialize points max cell
+    QTableWidgetItem* itemPtsMax = new QTableWidgetItem(QString::number(a->pointsMax()));
+    ui->tableExams->setItem( row, 3, itemPtsMax );
+    // initialize curve offset cell
+    QTableWidgetItem* itemCurve = new QTableWidgetItem(QString::number(static_cast<Exam*>(a)->curveOffset()));
+    ui->tableExams->setItem( row, 4, itemCurve );
+    // initialize checkbox isDropped cell
+    QCheckBox* checkBoxDropped = new QCheckBox(ui->tableExams);
+    ui->tableExams->setCellWidget(row, 5, checkBoxDropped);
+
+    // add event listeners & handlers to checkboxes (cellChanged functions do not trigger when these are toggled)
+    connect(checkBoxDropped, &QCheckBox::toggled, this, [this, a]{
+        a->setIsDropped();
+        this->updateDisplayedCalcs(AssignmentType::EXAM);
     });
+    ui->tableExams->blockSignals(false);
 }
 
 void Gradebook::on_tableExams_cellChanged(int row, int column) {
-    // switch statement here...call the correct setter depending on column number
-    updateDisplayedCalcs(EXAM);
+    // identify the Assignment the cell belongs to then call the appropriate setter
+    int id = ui->tableExams->item(row, 0)->text().toInt();
+
+    Exam* exam = static_cast<Exam*>(getAssignmentByID(id));
+    QTableWidgetItem* value = ui->tableExams->item(row, column);
+
+    ui->tableExams->blockSignals(true);
+    switch(column) {
+    case 1: // set name
+        exam->setName(value->text().toStdString());
+        ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::fromStdString(exam->name())) );
+        break;
+    case 2: // set points awarded
+        exam->setPointsAwarded(value->text().toFloat());
+        ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::number(exam->pointsAwarded())) );
+        break;
+    case 3: // set max points
+        exam->setPointsMax(value->text().toFloat());
+        ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::number(exam->pointsMax())) );
+        break;
+    case 4: // set exam curve
+        exam->setCurveOffset(value->text().toFloat());
+        ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::number(exam->curveOffset())) );
+        break;
+    }
+    ui->tableExams->blockSignals(false);
+
+    updateDisplayedCalcs(AssignmentType::EXAM);
 }
 
 void Gradebook::on_btnAddNewHomework_clicked()
 {
-    Assignment* a = createAssignment(HOMEWORK, nextAssignmentID());
+    // creates new Homework and adds it to assignments_
+    Assignment* a = createAssignment(AssignmentType::HOMEWORK, nextAssignmentID());
     assignments_.push_back(a);
 
+    // prevent events from the addition of the new row from triggering an infinite loop until table row initialization is done
+    ui->tableHomeworks->blockSignals(true);
+
+    // insert a new row at the bottom of the table
     int row = ui->tableHomeworks->rowCount();
     ui->tableHomeworks->insertRow(row);
-    QCheckBox* checkBoxIgnore = new QCheckBox(ui->tableHomeworks);
-    ui->tableHomeworks->setCellWidget(row, 3, checkBoxIgnore);
-    connect(checkBoxIgnore, &QCheckBox::toggled, this, [this, a]{
-        a->setIsIgnored();
-        updateDisplayedCalcs(HOMEWORK);
+
+    // initialize id cell (hidden)
+    ui->tableHomeworks->setItem( row, 0, new QTableWidgetItem(QString::number(a->id())) );
+
+    // initialize points awarded cell
+    ui->tableHomeworks->setItem( row, 2, new QTableWidgetItem(QString::number(a->pointsAwarded())) );
+
+    // initialize points max cell
+    ui->tableHomeworks->setItem( row, 3, new QTableWidgetItem(QString::number(a->pointsMax())) );
+
+    // initialize checkbox isLate cell
+    QCheckBox* checkBoxLate = new QCheckBox(ui->tableHomeworks);
+    ui->tableHomeworks->setCellWidget(row, 4, checkBoxLate);
+
+    // initialize checkbox isDropped cell
+    QCheckBox* checkBoxDropped = new QCheckBox(ui->tableHomeworks);
+    ui->tableHomeworks->setCellWidget(row, 5, checkBoxDropped);
+
+    // add event listeners & handlers to checkboxes (cellChanged functions do not trigger when these are toggled)
+    connect(checkBoxLate, &QCheckBox::toggled, this, [this, a]{
+        static_cast<Homework*>(a)->setIsLate();
+        this->updateDisplayedCalcs(AssignmentType::HOMEWORK);
     });
+    connect(checkBoxDropped, &QCheckBox::toggled, this, [this, a]{
+        a->setIsDropped();
+        this->updateDisplayedCalcs(AssignmentType::HOMEWORK);
+    });
+
+    // reactivate events
+    ui->tableHomeworks->blockSignals(false);
 }
 
 void Gradebook::on_tableHomeworks_cellChanged(int row, int column) {
-    // switch statement here...call the correct setter depending on column number
-    updateDisplayedCalcs(HOMEWORK);
+    // identify the Assignment the cell belongs to then call the appropriate setter
+    int id = ui->tableHomeworks->item(row, 0)->text().toInt();
+    Homework* hw = static_cast<Homework*>(getAssignmentByID(id));
+    QTableWidgetItem* value = ui->tableHomeworks->item(row, column);
+
+    ui->tableHomeworks->blockSignals(true);
+    switch(column) {
+    case 1: // set name
+        hw->setName(value->text().toStdString());
+        ui->tableHomeworks->setItem( row, column, new QTableWidgetItem(QString::fromStdString(hw->name())) );
+        break;
+    case 2: // set points awarded
+        hw->setPointsAwarded(value->text().toFloat());
+        ui->tableHomeworks->setItem( row, column, new QTableWidgetItem(QString::number(hw->pointsAwarded())) );
+        break;
+    case 3: // set max points
+        hw->setPointsMax(value->text().toFloat());
+        ui->tableHomeworks->setItem( row, column, new QTableWidgetItem(QString::number(hw->pointsMax())) );
+        break;
+    }
+    ui->tableHomeworks->blockSignals(false);
+
+    updateDisplayedCalcs(AssignmentType::HOMEWORK);
 }
 
 

@@ -5,17 +5,15 @@
 
 class Homework : public Assignment
 {
-    AssignmentType const type_ = HOMEWORK;
+    AssignmentType type() override;
     bool isLate_;
     bool isIgnored_;
 public:
     Homework(int id);
     void setPointsAwarded(float newPointsAwarded) override;
-    float effectivePointsAwarded(float latePenaltyFactor) override;
+    float effectivePointsAwarded() override;
     bool isLate();
     void setIsLate();
-    bool isIgnored();
-    void setIsIgnored();
 };
 
 #endif // HOMEWORK_H
