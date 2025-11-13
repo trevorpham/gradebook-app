@@ -37,19 +37,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="totalExamPtsAwarded">
-       <property name="font">
-        <font>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="totalExamPtsMax">
+      <widget class="QLabel" name="totalExamPts">
        <property name="font">
         <font>
          <pointsize>16</pointsize>
@@ -177,19 +165,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="totalHomeworkPtsAwarded">
-       <property name="font">
-        <font>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="totalHomeworkPtsMax">
+      <widget class="QLabel" name="totalHomeworkPts">
        <property name="font">
         <font>
          <pointsize>16</pointsize>
@@ -286,7 +262,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -321,7 +297,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>890</x>
@@ -356,7 +332,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>170</x>
@@ -390,7 +366,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>690</x>

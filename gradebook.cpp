@@ -116,12 +116,18 @@ void Gradebook::updateDisplayedCalcs()
     float examPercent = (effExamPointsAwarded / maxExamPoints) * 100;
 
 
-    ui->totalHomeworkPtsAwarded->setText(QString::number(effHWPointsAwarded));
-    ui->totalHomeworkPtsMax->setText(QString::number(maxHWPoints));
+    ui->totalHomeworkPts->setText(
+        QString::number(effHWPointsAwarded)
+        .append(QString("/"))
+        .append(QString::number(maxHWPoints))
+    );
     ui->totalHomeworkPercent->setText(QString::number(HWPercent).append("%"));
 
-    ui->totalExamPtsAwarded->setText(QString::number(effExamPointsAwarded));
-    ui->totalExamPtsMax->setText(QString::number(maxExamPoints));
+    ui->totalExamPts->setText(
+        QString::number(effExamPointsAwarded)
+            .append(QString("/"))
+            .append(QString::number(maxExamPoints))
+        );
     ui->totalExamPercent->setText(QString::number(examPercent).append("%"));
 }
 
@@ -134,14 +140,20 @@ void Gradebook::updateDisplayedCalcs(AssignmentType type)
 
     switch(type) {
     case AssignmentType::HOMEWORK:
-        ui->totalHomeworkPtsAwarded->setText(QString::number(effPointsAwarded));
-        ui->totalHomeworkPtsMax->setText(QString::number(maxPoints));
-        ui->totalHomeworkPercent->setText(QString::number(categoryPercent));
+        ui->totalHomeworkPts->setText(
+            QString::number(effPointsAwarded)
+            .append(QString("/"))
+            .append(QString::number(maxPoints))
+        );
+        ui->totalHomeworkPercent->setText(QString::number(categoryPercent).append("%"));
         break;
     case AssignmentType::EXAM:
-        ui->totalExamPtsAwarded->setText(QString::number(effPointsAwarded));
-        ui->totalExamPtsMax->setText(QString::number(maxPoints));
-        ui->totalExamPercent->setText(QString::number(categoryPercent));
+        ui->totalExamPts->setText(
+            QString::number(effPointsAwarded)
+            .append(QString("/"))
+            .append(QString::number(maxPoints))
+        );
+        ui->totalExamPercent->setText(QString::number(categoryPercent).append("%"));
         break;
     default:
         break;
@@ -154,21 +166,28 @@ void Gradebook::on_btnAddNewExam_clicked()
     Assignment* a = createAssignment(AssignmentType::EXAM, nextAssignmentID());
     assignments_.push_back(a);
 
+    // prevent events from the initialization of the new row from triggering an infinite loop
     ui->tableExams->blockSignals(true);
+
     // insert a new row at the bottom of the table
     int row = ui->tableExams->rowCount();
     ui->tableExams->insertRow(row);
+
     // initialize id cell (hidden)
     ui->tableExams->setItem( row, 0, new QTableWidgetItem(QString::number(a->id())) );
+
     // initialize points awarded cell
     QTableWidgetItem* itemPtsAward = new QTableWidgetItem(QString::number(a->pointsAwarded()));
     ui->tableExams->setItem( row, 2, itemPtsAward );
+
     // initialize points max cell
     QTableWidgetItem* itemPtsMax = new QTableWidgetItem(QString::number(a->pointsMax()));
     ui->tableExams->setItem( row, 3, itemPtsMax );
+
     // initialize curve offset cell
     QTableWidgetItem* itemCurve = new QTableWidgetItem(QString::number(static_cast<Exam*>(a)->curveOffset()));
     ui->tableExams->setItem( row, 4, itemCurve );
+
     // initialize checkbox isDropped cell
     QCheckBox* checkBoxDropped = new QCheckBox(ui->tableExams);
     ui->tableExams->setCellWidget(row, 5, checkBoxDropped);
@@ -178,6 +197,8 @@ void Gradebook::on_btnAddNewExam_clicked()
         a->setIsDropped();
         this->updateDisplayedCalcs(AssignmentType::EXAM);
     });
+
+    // reactivate events
     ui->tableExams->blockSignals(false);
 }
 
@@ -218,7 +239,7 @@ void Gradebook::on_btnAddNewHomework_clicked()
     Assignment* a = createAssignment(AssignmentType::HOMEWORK, nextAssignmentID());
     assignments_.push_back(a);
 
-    // prevent events from the addition of the new row from triggering an infinite loop until table row initialization is done
+    // prevent events from the initialization of the new row from triggering an infinite loop
     ui->tableHomeworks->blockSignals(true);
 
     // insert a new row at the bottom of the table
@@ -265,7 +286,7 @@ void Gradebook::on_tableHomeworks_cellChanged(int row, int column) {
     ui->tableHomeworks->blockSignals(true);
     switch(column) {
     case 1: // set name
-        hw->setName(value->text().toStdString());
+        hw->setName(value->text().toStdString()); // call setter. then call getter and pass result to UI
         ui->tableHomeworks->setItem( row, column, new QTableWidgetItem(QString::fromStdString(hw->name())) );
         break;
     case 2: // set points awarded
