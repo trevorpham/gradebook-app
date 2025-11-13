@@ -8,7 +8,7 @@ int Assignment::id()
     return id_;
 }
 
-std::string Assignment::type()
+AssignmentType Assignment::type()
 {
     return type_;
 }
@@ -25,6 +25,7 @@ void Assignment::setName(std::string &newName)
 
 float Assignment::pointsAwarded()
 {
+    if (isIgnored_) return 0.f;
     return pointsAwarded_;
 }
 
@@ -38,10 +39,21 @@ void Assignment::setPointsAwarded(float newPointsAwarded)
 
 float Assignment::pointsMax()
 {
+    if (isIgnored_) return 0.f;
     return pointsMax_;
 }
 
 void Assignment::setPointsMax(int newPointsMax)
 {
     pointsMax_ = std::max(1, newPointsMax);
+}
+
+bool Assignment::isIgnored()
+{
+    return isIgnored_;
+}
+
+void Assignment::setIsIgnored()
+{
+    isIgnored_ = !isIgnored_;
 }

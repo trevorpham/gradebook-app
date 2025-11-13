@@ -5,10 +5,9 @@
 
 class Homework : public Assignment
 {
-    std::string type_ = "HOMEWORK";
+    AssignmentType const type_ = HOMEWORK;
     bool isLate_;
     bool isIgnored_;
-    bool isExtraCredit_;
 public:
     Homework(int id);
     void setPointsAwarded(float newPointsAwarded) override;

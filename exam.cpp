@@ -14,6 +14,7 @@ void Exam::setCurveOffset(float newCurveOffset)
 
 float Exam::effectivePointsAwarded()
 {
+    if (isIgnored_) return 0.f;
     return std::min(
         static_cast<float>(pointsMax_),
         pointsAwarded_ + (curveOffset_ * pointsMax_)

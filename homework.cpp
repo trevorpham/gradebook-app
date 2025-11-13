@@ -9,6 +9,7 @@ void Homework::setPointsAwarded(float newPointsAwarded)
 
 float Homework::effectivePointsAwarded(float latePenaltyFactor = 1.f)
 {
+    if (isIgnored_) return 0;
     float effPts = pointsAwarded_ * (isLate_ ? latePenaltyFactor * pointsAwarded_ : 1.f);
     return effPts;
 }

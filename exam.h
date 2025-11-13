@@ -5,7 +5,7 @@
 
 class Exam : public Assignment
 {
-    std::string type_ = "EXAM";
+    AssignmentType const type_ = EXAM;
     float curveOffset_ = 0.0f;
 public:
     Exam(int id);
