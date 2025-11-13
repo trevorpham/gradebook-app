@@ -1,0 +1,6 @@
+#ifndef ASSIGNMENTTYPE_H
+#define ASSIGNMENTTYPE_H
+
+enum AssignmentType { ASSIGNMENT, HOMEWORK, EXAM };
+
+#endif // ASSIGNMENTTYPE_H
