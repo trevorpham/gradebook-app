@@ -116,11 +116,6 @@
          <string>Dropped</string>
         </property>
        </column>
-       <column>
-        <property name="text">
-         <string/>
-        </property>
-       </column>
       </widget>
      </item>
      <item>
@@ -153,11 +148,6 @@
        <column>
         <property name="text">
          <string>Dropped</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string/>
         </property>
        </column>
       </widget>
