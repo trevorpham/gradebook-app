@@ -14,8 +14,8 @@ void Homework::setPointsAwarded(float newPointsAwarded)
 
 float Homework::effectivePointsAwarded()
 {
-    // if (isIgnored_) return 0;
-    float effPts = pointsAwarded_ * (isLate_ ? 0.5f * pointsAwarded_ : 1.f);
+    if (isDropped_) return 0.f;
+    float effPts = pointsAwarded_ * (isLate_ ? 0.5f : 1.f);
     return effPts;
 }
 

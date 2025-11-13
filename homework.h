@@ -7,7 +7,6 @@ class Homework : public Assignment
 {
     AssignmentType type() override;
     bool isLate_;
-    bool isIgnored_;
 public:
     Homework(int id);
     void setPointsAwarded(float newPointsAwarded) override;
