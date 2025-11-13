@@ -17,13 +17,18 @@ class Gradebook : public QMainWindow
     float latePenaltyHomework_;
     int weightHomework_;
     int weightExam_;
+    int nextAssignmentID();
+    Assignment* createAssignment(AssignmentType assignmentType, int id);
+    bool deleteAssignment(int id); // Returns true if successful.
+    float categoryEffPointsAwarded(AssignmentType assignmentType);
+    float categoryMaxPoints(AssignmentType assignmentType);
+    float coursePercent();
+    void updateDisplayedCalcs();
+    void updateDisplayedCalcs(AssignmentType assignmentType);
+    QString letterGrade(float percent);
 
 public:
     Gradebook(QWidget *parent = nullptr);
-    QString calcLetterGrade(float percent);
-    int nextAssignmentID();
-    Assignment* createAssignment(std::string& assignmentType, int id);
-    bool deleteAssignment(int id); // Returns true if successful.
     ~Gradebook();
 
 private slots:
