@@ -125,9 +125,9 @@ void Gradebook::updateDisplayedCalcs()
 
     ui->totalExamPts->setText(
         QString::number(effExamPointsAwarded)
-            .append(QString("/"))
-            .append(QString::number(maxExamPoints))
-        );
+        .append(QString("/"))
+        .append(QString::number(maxExamPoints))
+    );
     ui->totalExamPercent->setText(QString::number(examPercent).append("%"));
 }
 
