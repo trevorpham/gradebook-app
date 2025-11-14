@@ -10,8 +10,8 @@ protected:
     AssignmentType const type_ = AssignmentType::ASSIGNMENT;
     std::string name_ = "";
     bool isDropped_ = false;
-    float pointsAwarded_ = 0;
-    float pointsMax_ = 1.f;
+    float pointsAwarded_ = 0.f;
+    float pointsMax_ = 0.f;
 public:
     Assignment(int id);
     virtual ~Assignment();
