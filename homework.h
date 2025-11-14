@@ -5,10 +5,10 @@
 
 class Homework : public Assignment
 {
-    AssignmentType type() override;
     bool isLate_;
 public:
     Homework(int id);
+    AssignmentType type() override;
     void setPointsAwarded(float newPointsAwarded) override;
     float effectivePointsAwarded() override;
     bool isLate();
