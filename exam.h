@@ -5,7 +5,6 @@
 
 class Exam : public Assignment
 {
-    AssignmentType const type_ = AssignmentType::EXAM;
     float curveOffset_ = 0.0f;
 public:
     Exam(int id);
