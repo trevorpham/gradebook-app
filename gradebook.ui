@@ -44,7 +44,7 @@
         </font>
        </property>
        <property name="text">
-        <string>0</string>
+        <string>0/0</string>
        </property>
       </widget>
      </item>
@@ -96,7 +96,7 @@
        </column>
        <column>
         <property name="text">
-         <string>Late</string>
+         <string>Late (-50%)</string>
         </property>
        </column>
        <column>
@@ -130,7 +130,7 @@
        </column>
        <column>
         <property name="text">
-         <string>Curve Offset</string>
+         <string>Curve Offset %</string>
         </property>
        </column>
        <column>
@@ -172,7 +172,7 @@
         </font>
        </property>
        <property name="text">
-        <string>0</string>
+        <string>0/0</string>
        </property>
       </widget>
      </item>
@@ -193,46 +193,22 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>560</y>
-      <width>574</width>
+      <x>360</x>
+      <y>540</y>
+      <width>311</width>
       <height>24</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QLabel" name="totalGrade">
+      <widget class="QLabel" name="labelTotalPercent">
        <property name="font">
         <font>
          <pointsize>18</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Total Grade:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="totalPtsAwarded">
-       <property name="font">
-        <font>
-         <pointsize>18</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Total Points Awarded:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="totalPtsMax">
-       <property name="font">
-        <font>
-         <pointsize>18</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Total Points Max:</string>
+        <string>Total:</string>
        </property>
       </widget>
      </item>
@@ -244,7 +220,19 @@
         </font>
        </property>
        <property name="text">
-        <string>Total %:</string>
+        <string>--%</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelLetterGrade">
+       <property name="font">
+        <font>
+         <pointsize>18</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Grade:</string>
        </property>
       </widget>
      </item>
@@ -256,7 +244,7 @@
         </font>
        </property>
        <property name="text">
-        <string>LetterGrade:</string>
+        <string>--</string>
        </property>
       </widget>
      </item>
@@ -267,7 +255,7 @@
      <rect>
       <x>380</x>
       <y>460</y>
-      <width>121</width>
+      <width>126</width>
       <height>23</height>
      </rect>
     </property>
@@ -275,7 +263,7 @@
      <item>
       <widget class="QLabel" name="hwWeightLabel">
        <property name="text">
-        <string>% Weight</string>
+        <string>% of grade</string>
        </property>
       </widget>
      </item>
@@ -293,6 +281,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="text">
+        <string>0</string>
+       </property>
       </widget>
      </item>
     </layout>
@@ -302,7 +293,7 @@
      <rect>
       <x>890</x>
       <y>460</y>
-      <width>121</width>
+      <width>126</width>
       <height>23</height>
      </rect>
     </property>
@@ -310,7 +301,7 @@
      <item>
       <widget class="QLabel" name="examWeightLabel">
        <property name="text">
-        <string>% Weight</string>
+        <string>% of grade</string>
        </property>
       </widget>
      </item>
@@ -327,6 +318,9 @@
          <width>50</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="text">
+        <string>0</string>
        </property>
       </widget>
      </item>

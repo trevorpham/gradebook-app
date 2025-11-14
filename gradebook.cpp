@@ -18,6 +18,38 @@ Gradebook::Gradebook(QWidget *parent)
     ui->tableExams->verticalHeader()->setVisible(false); // hide row index
 }
 
+Gradebook::~Gradebook()
+{
+    while (!assignments_.isEmpty()) delete assignments_.takeLast();
+    delete ui;
+}
+
+int Gradebook::gradeWeight(AssignmentType type)
+{
+    switch(type) {
+    case AssignmentType::HOMEWORK:
+        return weightHomework_;
+    case AssignmentType::EXAM:
+        return weightExam_;
+    default:
+        return 0;
+    }
+}
+
+void Gradebook::setGradeWeight(AssignmentType type, int newWeight)
+{
+    switch(type) {
+    case AssignmentType::HOMEWORK:
+        weightHomework_ = std::min(100, std::max(0, newWeight));
+        break;
+    case AssignmentType::EXAM:
+        weightExam_ = std::min(100, std::max(0, newWeight));
+        break;
+    default:
+        break;
+    }
+}
+
 int Gradebook::nextAssignmentID()
 {
     static int s_nextID = 1;
@@ -63,21 +95,6 @@ bool Gradebook::deleteAssignment(int id)
     return false;
 }
 
-QString Gradebook::letterGrade(float percent)
-{
-    if (percent >= .90) return QString("A");
-    if (percent >= .80) return QString("B");
-    if (percent >= .70) return QString("C");
-    if (percent >= .60) return QString("D");
-    else return QString("F");
-}
-
-Gradebook::~Gradebook()
-{
-    while (!assignments_.isEmpty()) delete assignments_.takeLast();
-    delete ui;
-}
-
 float Gradebook::categoryEffPointsAwarded(AssignmentType type)
 {
     float sum = 0.f;
@@ -104,8 +121,38 @@ float Gradebook::categoryMaxPoints(AssignmentType type)
     return sum;
 }
 
+float Gradebook::coursePercent()
+{
+    float effHWPointsAwarded = categoryEffPointsAwarded(AssignmentType::HOMEWORK);
+    float maxHWPoints = categoryMaxPoints(AssignmentType::HOMEWORK);
+    float HWPercent = effHWPointsAwarded / maxHWPoints;
+
+    float effExamPointsAwarded = categoryEffPointsAwarded(AssignmentType::EXAM);
+    float maxExamPoints = categoryMaxPoints(AssignmentType::EXAM);
+    float examPercent = effExamPointsAwarded / maxExamPoints;
+
+    // weighted course percent only if weights are entered in UI
+    bool doWeightedCalcs = weightHomework_ > 0 and weightExam_ > 0;
+    if (doWeightedCalcs) {
+        float weightedHWPercent = HWPercent * (static_cast<float>(weightHomework_) / 100);
+        float weightedExamPercent = examPercent * (static_cast<float>(weightExam_) / 100);
+        return weightedHWPercent + weightedExamPercent;
+    }
+    else {
+        return (effHWPointsAwarded + effExamPointsAwarded) / (maxHWPoints + maxExamPoints);
+    }
+}
+
+QString Gradebook::letterGrade(float percent)
+{
+    if (percent >= .90) return QString("A");
+    if (percent >= .80) return QString("B");
+    if (percent >= .70) return QString("C");
+    if (percent >= .60) return QString("D");
+    else return QString("F");
+}
+
 void Gradebook::updateDisplayedCalcs()
-// overloaded method, updates all displayed calculated values if no AssignmentType given
 {
     float effHWPointsAwarded = categoryEffPointsAwarded(AssignmentType::HOMEWORK);
     float maxHWPoints = categoryMaxPoints(AssignmentType::HOMEWORK);
@@ -114,7 +161,6 @@ void Gradebook::updateDisplayedCalcs()
     float effExamPointsAwarded = categoryEffPointsAwarded(AssignmentType::EXAM);
     float maxExamPoints = categoryMaxPoints(AssignmentType::EXAM);
     float examPercent = (effExamPointsAwarded / maxExamPoints) * 100;
-
 
     ui->totalHomeworkPts->setText(
         QString::number(effHWPointsAwarded)
@@ -129,35 +175,10 @@ void Gradebook::updateDisplayedCalcs()
         .append(QString::number(maxExamPoints))
     );
     ui->totalExamPercent->setText(QString::number(examPercent).append("%"));
-}
 
-void Gradebook::updateDisplayedCalcs(AssignmentType type)
-// overloaded method, updates displayed calculations only for specified AssignmentType
-{
-    float effPointsAwarded = categoryEffPointsAwarded(type);
-    float maxPoints = categoryMaxPoints(type);
-    float categoryPercent = (effPointsAwarded / maxPoints) * 100;
-
-    switch(type) {
-    case AssignmentType::HOMEWORK:
-        ui->totalHomeworkPts->setText(
-            QString::number(effPointsAwarded)
-            .append(QString("/"))
-            .append(QString::number(maxPoints))
-        );
-        ui->totalHomeworkPercent->setText(QString::number(categoryPercent).append("%"));
-        break;
-    case AssignmentType::EXAM:
-        ui->totalExamPts->setText(
-            QString::number(effPointsAwarded)
-            .append(QString("/"))
-            .append(QString::number(maxPoints))
-        );
-        ui->totalExamPercent->setText(QString::number(categoryPercent).append("%"));
-        break;
-    default:
-        break;
-    }
+    float totalPercent = coursePercent();
+    ui->totalPercent->setText( QString::number(totalPercent * 100).append("%") );
+    ui->letterGrade->setText( letterGrade(totalPercent) );
 }
 
 void Gradebook::on_btnAddNewExam_clicked()
@@ -195,14 +216,15 @@ void Gradebook::on_btnAddNewExam_clicked()
     // add event listeners & handlers to checkboxes (cellChanged functions do not trigger when these are toggled)
     connect(checkBoxDropped, &QCheckBox::toggled, this, [this, a]{
         a->setIsDropped();
-        this->updateDisplayedCalcs(AssignmentType::EXAM);
+        this->updateDisplayedCalcs();
     });
 
     // reactivate events
     ui->tableExams->blockSignals(false);
 }
 
-void Gradebook::on_tableExams_cellChanged(int row, int column) {
+void Gradebook::on_tableExams_cellChanged(int row, int column)
+{
     // identify the Assignment the cell belongs to then call the appropriate setter
     int id = ui->tableExams->item(row, 0)->text().toInt();
 
@@ -224,13 +246,13 @@ void Gradebook::on_tableExams_cellChanged(int row, int column) {
         ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::number(exam->pointsMax())) );
         break;
     case 4: // set exam curve
-        exam->setCurveOffset(value->text().toFloat());
-        ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::number(exam->curveOffset())) );
+        exam->setCurveOffset(value->text().toFloat() / 100.f);
+        ui->tableExams->setItem( row, column, new QTableWidgetItem(QString::number(exam->curveOffset() * 100)) );
         break;
     }
     ui->tableExams->blockSignals(false);
 
-    updateDisplayedCalcs(AssignmentType::EXAM);
+    updateDisplayedCalcs();
 }
 
 void Gradebook::on_btnAddNewHomework_clicked()
@@ -266,11 +288,11 @@ void Gradebook::on_btnAddNewHomework_clicked()
     // add event listeners & handlers to checkboxes (cellChanged functions do not trigger when these are toggled)
     connect(checkBoxLate, &QCheckBox::toggled, this, [this, a]{
         static_cast<Homework*>(a)->setIsLate();
-        this->updateDisplayedCalcs(AssignmentType::HOMEWORK);
+        this->updateDisplayedCalcs();
     });
     connect(checkBoxDropped, &QCheckBox::toggled, this, [this, a]{
         a->setIsDropped();
-        this->updateDisplayedCalcs(AssignmentType::HOMEWORK);
+        this->updateDisplayedCalcs();
     });
 
     // reactivate events
@@ -300,66 +322,22 @@ void Gradebook::on_tableHomeworks_cellChanged(int row, int column) {
     }
     ui->tableHomeworks->blockSignals(false);
 
-    updateDisplayedCalcs(AssignmentType::HOMEWORK);
+    updateDisplayedCalcs();
 }
 
+void Gradebook::on_hwWeight_textEdited(const QString &arg1)
+{
+    int newWeight = arg1.toInt();
+    setGradeWeight(AssignmentType::HOMEWORK, newWeight);
+    ui->hwWeight->setText( QString::number(gradeWeight(AssignmentType::HOMEWORK)) );
+    updateDisplayedCalcs();
+}
 
-// // START OF EXAM
-// void Gradebook::recomputeExam()
-// {
-//     QTableWidget* Exam = ui ->tableExams;
-//     int rowCount = ui->tableExams->rowCount();
-//     int colCount = ui->tableExams->columnCount();
-//     int pointAwardedCol = 1;
-//     int pointMaxCol = 2;
-//     float pointAwardedSum = 0;
-//     float pointMaxSum = 0;
-//     float percent = 0;
-
-//     for (int i=0; i<rowCount; i++) {
-//         QTableWidgetItem* itemPointAwarded = ui->tableExams->item(i, pointAwardedCol);
-//         QTableWidgetItem* itemPointMax = ui->tableExams->item(i, pointMaxCol);
-
-//         QCheckBox* Box = qobject_cast<QCheckBox*>(Exam->cellWidget(i,3));
-//         if(Box && Box->isChecked()){
-//             continue;
-//         }
-
-//         if (itemPointAwarded) {
-//             float itemValue = itemPointAwarded->text().toFloat();
-//             pointAwardedSum += itemValue;
-//         }
-//         if (itemPointMax) {
-//             float itemValue = itemPointMax->text().toFloat();
-//             pointMaxSum += itemValue;
-//         }
-//     }
-
-
-//     ui->totalExamPtsAwarded->setText(QString::number(pointAwardedSum));
-//     ui->totalExamPtsMax->setText(QString::number(pointMaxSum));
-
-//     if (pointMaxSum != 0) {
-//         percent = pointAwardedSum / pointMaxSum;
-//         ui->totalExamPercent->setText(QString::number(percent * 100).append("%"));
-//     }
-
-//     float Test_Hw = ui->Test_HW2->text().toFloat();
-//     float Test_Exam = ui->Test_Exam2->text().toFloat();
-
-//     float homeworkPoints = ui->totalHomeworkPtsAwarded->text().toFloat();
-//     float totalPointsAwarded = (pointAwardedSum*Test_Exam) + (homeworkPoints*Test_Hw); // grade calculation w weigth
-//     ui->totalPtsAwarded->setText(QString::number(totalPointsAwarded));
-
-//     float homeworkMaxPoints = ui->totalHomeworkPtsMax->text().toFloat();
-//     float totalPointsMax = (pointMaxSum*Test_Exam) + (homeworkMaxPoints*Test_Hw); // something here?
-//     ui->totalPtsMax->setText(QString::number(totalPointsMax));
-
-//     float totalPercent = totalPointsAwarded / totalPointsMax;
-//     ui->totalPercent->setText(QString::number(totalPercent * 100).append("%"));
-
-//     QString letterGrade = calcLetterGrade(totalPercent);
-//     ui->letterGrade->setText(letterGrade);
-// }
-
+void Gradebook::on_examWeight_textEdited(const QString &arg1)
+{
+    int newWeight = arg1.toInt();
+    setGradeWeight(AssignmentType::EXAM, newWeight);
+    ui->examWeight->setText( QString::number(gradeWeight(AssignmentType::EXAM)) );
+    updateDisplayedCalcs();
+}
 
