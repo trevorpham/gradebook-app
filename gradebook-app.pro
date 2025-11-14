@@ -17,6 +17,7 @@ SOURCES += \
 
 HEADERS += \
     assignment.h \
+    assignmentType.h \
     exam.h \
     gradebook.h \
     homework.h

@@ -5,10 +5,10 @@
 
 class Exam : public Assignment
 {
-    std::string type_ = "EXAM";
     float curveOffset_ = 0.0f;
 public:
     Exam(int id);
+    AssignmentType type() override;
     float curveOffset();
     void setCurveOffset(float newCurveOffset);
     float effectivePointsAwarded() override;
